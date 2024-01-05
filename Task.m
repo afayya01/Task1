@@ -42,14 +42,11 @@ u = ones(length(t), 1); % Column vector for input
 % Define the time step for the simulation
 dt = 0.01;
 
-% Define number of runs for collecting normal condition data
-num_runs = 5; 
-residuals = zeros(num_runs, length(t));  % Preallocate for residuals
+% Initialize residuals variable
+residuals = zeros(length(t), 1);
 
-% Simulate under normal conditions
-for run = 1:num_runs
-    x = zeros(n, 1); % Reset initial state
-    x_hat = zeros(n, 1); % Reset initial estimated state
+x = zeros(n, 1); % Reset initial state
+x_hat = zeros(n, 1); % Reset initial estimated state
     for k = 1:length(t)
         w = 0.01 * randn(n, 1); % Process noise vector
         v = 0.01 * randn; % Measurement noise
@@ -62,9 +59,8 @@ for run = 1:num_runs
         x_hat_dot = A * x_hat + B * u(k) + L * (y - y_hat);
         x_hat = x_hat + x_hat_dot * dt;
         % Calculate residual
-        residuals(run, k) = (C*x) - (C*x_hat);
+        residuals(k) = (C*x) - (C*x_hat);
     end
-end
 
 % Calculate standard deviation of residuals
 std_residual = std(residuals(:));
