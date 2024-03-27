@@ -138,28 +138,27 @@ for i = 1:length(selected_time_steps)
     time_step = selected_time_steps(i);
     
     % Extract the data for the selected time step
-    y_data = Y(time_step, :);
     residuals_data = Residuals(time_step, :);
-    
-    % Kernel Density Estimation for y
-    figure;
-    [f_y, xi_y] = ksdensity(y_data);
-    plot(xi_y, f_y, 'LineWidth', 2);
-    title(sprintf('Estimated PDF of Output y at Time Step %d', time_step));
-    xlabel('Output y');
-    ylabel('Probability Density');
-    % Save the plot
-    saveas(gcf, sprintf('Estimated_PDF_y_TimeStep%d.png', time_step));
     
     % Kernel Density Estimation for residuals
     figure;
     [f_r, xi_r] = ksdensity(residuals_data);
-    plot(xi_r, f_r, 'LineWidth', 2);
+    
+    % Adjust the scaling factor according to your data
+    scaling_factor = 1e3;
+    
+    % Rescale the KDE y-values and x-values to maintain the area under the curve
+    f_r_scaled = f_r / scaling_factor;
+    xi_r_scaled = xi_r / scaling_factor;
+    
+    % Plot the rescaled KDE
+    plot(xi_r_scaled, f_r_scaled, 'LineWidth', 2);
     title(sprintf('Estimated PDF of Residuals at Time Step %d', time_step));
-    xlabel('Residual');
-    ylabel('Probability Density');
-    % Save the plot
-    saveas(gcf, sprintf('Estimated_PDF_r_TimeStep%d.png', time_step));
+    xlabel('Residual (x 10^3)');
+    ylabel('Probability Density (x 10^-3)');
+    
+    % Save the plot with a modified filename to reflect the changes
+    saveas(gcf, sprintf('Scaled_Estimated_PDF_r_TimeStep%d.png', time_step));
 end
 
 % load('my_complete_workspace.mat');  % To load workspace
